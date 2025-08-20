@@ -62,12 +62,6 @@ python -m src.main --source zh --target en --translator mock --max-samples 10
 # Evaluate with Llama model
 python -m src.main --source zh --target en --translator llama --model-path /path/to/model.gguf
 
-# Evaluate all language pairs with limited samples
-python -m src.main --all-pairs --translator mock --max-samples 5
-
-# Evaluate specific language pairs
-python -m src.main --pairs "zh,en en,fr fr,es" --translator mock
-
 # Advanced usage with custom settings
 python -m src.main \
   --source zh --target en \

@@ -38,21 +38,6 @@ pip install -e ".[dev]"
 
 ### Basic Usage
 
-#### Command Line Interface
-
-```bash
-# Evaluate single language pair with mock translator (for testing)
-eval-translation --source zh --target en --translator mock --max-samples 10
-
-# Evaluate with Llama model
-eval-translation --source zh --target en --translator llama --model-path /path/to/model.gguf
-
-# Evaluate all language pairs
-eval-translation --all-pairs --translator mock --max-samples 5
-
-# Evaluate specific pairs
-eval-translation --pairs "zh,en en,fr fr,es" --translator mock
-```
 
 #### Python API
 

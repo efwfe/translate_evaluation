@@ -57,7 +57,7 @@ dev = [
 all = ["translation-evaluation-framework[llama,dev]"]
 
 [project.scripts]
-eval-translation = "src.main:main"
+eval-translation = "eval_translation:main"
 
 [project.urls]
 Homepage = "https://github.com/example/translation-evaluation-framework"

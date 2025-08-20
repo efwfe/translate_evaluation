@@ -19,23 +19,6 @@ A comprehensive, production-ready evaluation framework for machine translation s
 
 ## 🚀 Quick Start
 
-### Installation
-
-```bash
-# Clone the repository
-git clone https://github.com/example/translation-evaluation-framework.git
-cd translation-evaluation-framework
-
-# Install dependencies
-pip install -e .
-
-# For Llama model support
-pip install -e ".[llama]"
-
-# For development
-pip install -e ".[dev]"
-```
-
 ### Basic Usage
 
 

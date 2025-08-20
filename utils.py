@@ -11,3 +11,8 @@ def save_data(data, file_path):
         json.dump(data, f, ensure_ascii=False, indent=4)
 
 
+def to_message(prompt, system_prompt:str = ""):
+        return [
+            {"role": "system", "content": system_prompt},
+            {"role": "user", "content": prompt},
+        ]

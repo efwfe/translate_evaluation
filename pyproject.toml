@@ -1,9 +1,34 @@
 [project]
-name = "evaluate"
-version = "0.1.0"
-description = "Add your description here"
+name = "translation-evaluation-framework"
+version = "0.2.0"
+description = "A comprehensive evaluation framework for machine translation systems using BLEU scores across multiple domains and language pairs"
 readme = "README.md"
-requires-python = ">=3.13"
+license = {text = "Apache-2.0"}
+authors = [
+    {name = "Translation Evaluation Team", email = "team@example.com"}
+]
+maintainers = [
+    {name = "Translation Evaluation Team", email = "team@example.com"}
+]
+keywords = ["translation", "evaluation", "nlp", "bleu", "machine-translation"]
+classifiers = [
+    "Development Status :: 4 - Beta",
+    "Intended Audience :: Developers",
+    "Intended Audience :: Science/Research",
+    "License :: OSI Approved :: Apache Software License",
+    "Operating System :: OS Independent",
+    "Programming Language :: Python :: 3",
+    "Programming Language :: Python :: 3.8",
+    "Programming Language :: Python :: 3.9",
+    "Programming Language :: Python :: 3.10",
+    "Programming Language :: Python :: 3.11",
+    "Programming Language :: Python :: 3.12",
+    "Programming Language :: Python :: 3.13",
+    "Topic :: Scientific/Engineering :: Artificial Intelligence",
+    "Topic :: Software Development :: Libraries :: Python Modules",
+    "Topic :: Text Processing :: Linguistic",
+]
+requires-python = ">=3.8"
 dependencies = [
     "bert-score>=0.3.11",
     "datasets>=1.15.0",
@@ -17,3 +42,24 @@ dependencies = [
     "tqdm>=4.62.0",
     "transformers>=4.12.0",
 ]
+
+[project.optional-dependencies]
+llama = ["llama-cpp-python>=0.2.0"]
+dev = [
+    "pytest>=6.0.0",
+    "pytest-cov>=2.10.0",
+    "black>=21.0.0",
+    "isort>=5.0.0",
+    "flake8>=3.8.0",
+    "mypy>=0.800",
+]
+all = ["translation-evaluation-framework[llama,dev]"]
+
+[project.scripts]
+eval-translation = "src.main:main"
+
+[project.urls]
+Homepage = "https://github.com/example/translation-evaluation-framework"
+Documentation = "https://github.com/example/translation-evaluation-framework#readme"
+Repository = "https://github.com/example/translation-evaluation-framework.git"
+Issues = "https://github.com/example/translation-evaluation-framework/issues"

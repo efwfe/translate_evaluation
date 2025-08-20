@@ -1,307 +1,316 @@
 # Translation Evaluation Framework
 
-A comprehensive evaluation framework for machine translation systems using BLEU scores across multiple domains and language pairs.
+[![License](https://img.shields.io/badge/License-Apache%202.0-blue.svg)](https://opensource.org/licenses/Apache-2.0)
+[![Python](https://img.shields.io/badge/python-3.8+-blue.svg)](https://www.python.org/downloads/)
+[![Code Style](https://img.shields.io/badge/code%20style-black-000000.svg)](https://github.com/psf/black)
 
-## Overview
+A comprehensive, production-ready evaluation framework for machine translation systems using BLEU scores across multiple domains and language pairs.
 
-This project provides a standardized evaluation pipeline for translation functions, supporting 7 languages (Chinese, English, Japanese, French, Italian, Spanish, Portuguese) across various domains including technology, business, travel, education, healthcare, and legal.
+## 🌟 Features
 
-## Features
+- **Multi-language Support**: Evaluate translations between any pair of 7 supported languages (Chinese, English, Japanese, French, Italian, Spanish, Portuguese)
+- **Domain-specific Evaluation**: Test translation quality across different specialized domains (technology, business, travel, education, healthcare, legal)
+- **Multiple Evaluation Metrics**: Industry-standard automatic evaluation using SacreBLEU with language-specific tokenization
+- **Comprehensive Logging**: Structured logging with multiple levels and file/console output
+- **CSV Export**: Export detailed results and statistics to CSV files for further analysis
+- **Rich Visualizations**: Generate comprehensive plots and charts for performance analysis
+- **Flexible Translation Interface**: Easy integration with any translation system
+- **Apache 2.0 Licensed**: Open source with permissive licensing
 
-- **Multi-language Support**: Evaluate translations between any pair of 7 supported languages
-- **Domain-specific Evaluation**: Test translation quality across different specialized domains
-- **BLEU Score Metrics**: Industry-standard automatic evaluation using SacreBLEU
-- **Visual Analytics**: Generate comprehensive plots and charts for performance analysis
-- **Flexible Translation Interface**: Easy integration with any translation function
-
-## Quick Start
+## 🚀 Quick Start
 
 ### Installation
 
 ```bash
 # Clone the repository
-git clone <your-repo-url>
-cd evaluate
+git clone https://github.com/example/translation-evaluation-framework.git
+cd translation-evaluation-framework
 
 # Install dependencies
-pip install -r requirements.txt
-# or using uv
-uv sync
+pip install -e .
+
+# For Llama model support
+pip install -e ".[llama]"
+
+# For development
+pip install -e ".[dev]"
 ```
 
 ### Basic Usage
 
-The core evaluation function requires implementing a translation function that takes a source text string and returns a translated string:
+#### Command Line Interface
+
+```bash
+# Evaluate single language pair with mock translator (for testing)
+eval-translation --source zh --target en --translator mock --max-samples 10
+
+# Evaluate with Llama model
+eval-translation --source zh --target en --translator llama --model-path /path/to/model.gguf
+
+# Evaluate all language pairs
+eval-translation --all-pairs --translator mock --max-samples 5
+
+# Evaluate specific pairs
+eval-translation --pairs "zh,en en,fr fr,es" --translator mock
+```
+
+#### Python API
 
 ```python
-from evaluate import evaluate_translation, plot_bleu_score
+from src.evaluator import TranslationEvaluator
+from src.translator import create_translator
+from src.visualizer import EvaluationVisualizer
 
-# Implement your translation function
-def my_translate_function(source_text: str) -> str:
-    """
-    Your translation implementation here.
-    
-    Args:
-        source_text (str): Text to translate
+# Create evaluator
+evaluator = TranslationEvaluator()
+evaluator.load_evaluation_data()
+
+# Create translator
+translator = create_translator(
+    translator_type='mock',  # or 'llama'
+    source_lang='zh',
+    target_lang='en'
+)
+
+# Evaluate
+results = evaluator.evaluate_translator(translator, max_samples=100)
+
+# Visualize results
+visualizer = EvaluationVisualizer()
+visualizer.create_evaluation_report(results)
+
+# Save results
+evaluator.save_results(results, "my_evaluation")
+```
+
+## 📊 Output and Results
+
+The framework generates multiple types of output:
+
+### 1. CSV Files
+- **Detailed Results**: Individual translation scores with metadata
+- **Summary Statistics**: Aggregated metrics by domain and language pair
+- **Evaluation Metadata**: Timestamps, configuration, and system information
+
+### 2. Visualizations
+- **Domain Score Distributions**: Box plots showing score ranges by domain
+- **Language Pair Comparisons**: Comparative analysis across different language pairs
+- **Score Histograms**: Distribution analysis of BLEU scores
+- **Comprehensive Reports**: Multi-plot evaluation summaries
+
+### 3. Structured Logs
+- **Evaluation Progress**: Real-time progress tracking with timestamps
+- **Error Handling**: Detailed error messages and stack traces
+- **Performance Metrics**: Translation times and system resource usage
+- **Statistical Summaries**: Automatic calculation of means, medians, and standard deviations
+
+## 🔧 Configuration
+
+### Environment Variables
+
+```bash
+# Model configuration
+export MODEL_PATH="/path/to/your/model.gguf"
+export USE_GPU="true"
+
+# Logging configuration
+export LOG_LEVEL="INFO"
+
+# Output configuration
+export SAVE_PLOTS="true"
+export SAVE_CSV="true"
+export SHOW_PLOTS="false"
+
+# Evaluation configuration
+export BATCH_SIZE="1"
+export PARALLEL_WORKERS="1"
+```
+
+### Configuration File
+
+Create a `.env` file in the project root:
+
+```env
+MODEL_PATH=/path/to/model.gguf
+LOG_LEVEL=INFO
+SAVE_PLOTS=true
+SAVE_CSV=true
+USE_GPU=false
+```
+
+## 🏗️ Project Structure
+
+```
+translation-evaluation-framework/
+├── src/                          # Source code
+│   ├── __init__.py              # Package initialization
+│   ├── config.py                # Configuration management
+│   ├── evaluator.py             # Core evaluation logic
+│   ├── logger.py                # Logging utilities
+│   ├── main.py                  # CLI entry point
+│   ├── translator.py            # Translation interfaces
+│   ├── utils.py                 # Utility functions
+│   └── visualizer.py            # Visualization tools
+├── data/                        # Evaluation datasets
+│   └── translation.json         # Multi-language test data
+├── results/                     # Evaluation results (auto-created)
+├── logs/                        # Log files (auto-created)
+├── plots/                       # Generated visualizations (auto-created)
+├── LICENSE                      # Apache 2.0 License
+├── README.md                    # This file
+├── pyproject.toml              # Project configuration
+└── requirements.txt            # Python dependencies
+```
+
+## 🔌 Implementing Custom Translators
+
+### Basic Translator
+
+```python
+from src.translator import BaseTranslator
+
+class MyTranslator(BaseTranslator):
+    def __init__(self, source_lang: str, target_lang: str, **kwargs):
+        super().__init__(source_lang, target_lang)
+        # Initialize your translation model here
         
-    Returns:
-        str: Translated text
-    """
-    # Example: Using a simple API call or model inference
-    translated = your_translation_model.translate(source_text)
-    return translated
-
-# Evaluate your translation function
-bleu_scores = evaluate_translation('zh', 'en', my_translate_function)
-
-# Generate visualization
-plot_bleu_score(bleu_scores, 'zh', 'en')
+    def translate(self, text: str) -> str:
+        # Implement your translation logic
+        return your_translation_result
 ```
 
-## Translation Function Implementation Guide
-
-### Function Signature
-
-Your translation function must follow this signature:
-
-```python
-def translate(source_text: str) -> str:
-    """
-    Translate source text to target text.
-    
-    Args:
-        source_text (str): Input text in source language
-        
-    Returns:
-        str: Translated text in target language
-    """
-    pass
-```
-
-### Implementation Examples
-
-#### 1. Using Google Translate API
-
-```python
-from googletrans import Translator
-
-def google_translate(source_text: str) -> str:
-    translator = Translator()
-    result = translator.translate(source_text, src='zh', dest='en')
-    return result.text
-```
-
-#### 2. Using Hugging Face Transformers
-
-```python
-from transformers import MarianMTModel, MarianTokenizer
-
-class HuggingFaceTranslator:
-    def __init__(self, model_name: str):
-        self.tokenizer = MarianTokenizer.from_pretrained(model_name)
-        self.model = MarianMTModel.from_pretrained(model_name)
-    
-    def translate(self, source_text: str) -> str:
-        inputs = self.tokenizer(source_text, return_tensors="pt", padding=True)
-        outputs = self.model.generate(**inputs)
-        return self.tokenizer.decode(outputs[0], skip_special_tokens=True)
-
-# Usage
-translator = HuggingFaceTranslator("Helsinki-NLP/opus-mt-zh-en")
-bleu_scores = evaluate_translation('zh', 'en', translator.translate)
-```
-
-#### 3. Using OpenAI API
+### Using External APIs
 
 ```python
 import openai
+from src.translator import BaseTranslator
 
-def openai_translate(source_text: str) -> str:
-    response = openai.ChatCompletion.create(
-        model="gpt-3.5-turbo",
-        messages=[
-            {"role": "system", "content": "You are a professional translator. Translate the following Chinese text to English. Return only the translation."},
-            {"role": "user", "content": source_text}
-        ]
-    )
-    return response.choices[0].message.content.strip()
+class OpenAITranslator(BaseTranslator):
+    def __init__(self, source_lang: str, target_lang: str, api_key: str):
+        super().__init__(source_lang, target_lang)
+        openai.api_key = api_key
+        
+    def translate(self, text: str) -> str:
+        response = openai.ChatCompletion.create(
+            model="gpt-3.5-turbo",
+            messages=[
+                {"role": "system", "content": f"Translate from {self.source_lang} to {self.target_lang}"},
+                {"role": "user", "content": text}
+            ]
+        )
+        return response.choices[0].message.content
 ```
 
-## Evaluation Metrics
+## 📈 Evaluation Metrics
 
-### BLEU Score
+### BLEU Score Calculation
 
-The framework uses [SacreBLEU](https://github.com/mjpost/sacrebleu) for standardized BLEU score calculation:
+The framework uses [SacreBLEU](https://github.com/mjpost/sacrebleu) with language-specific tokenization:
 
-- **Sentence-level BLEU**: Calculated for each translation pair
-- **Domain-level aggregation**: Scores grouped by domain (tech, business, travel, etc.)
-- **Overall average**: Mean BLEU score across all domains
+- **Chinese/Japanese**: Character-level tokenization (`char`)
+- **Romance Languages** (French, Italian, Spanish, Portuguese): International tokenization (`intl`)
+- **Other Languages**: Default tokenization (`13a`)
 
-### Supported Language Pairs
+### Statistical Measures
 
-The framework supports evaluation between any pair of these languages:
-- Chinese (zh)
-- English (en) 
-- Japanese (ja)
-- French (fr)
-- Italian (it)
-- Spanish (es)
-- Portuguese (pt)
+For each evaluation, the framework calculates:
 
-Total: 21 unique language pairs (7 choose 2)
+- **Mean BLEU Score**: Average performance across all samples
+- **Median**: Middle value for robust central tendency
+- **Standard Deviation**: Measure of score variability
+- **Quartiles**: Q1, Q3 for distribution analysis
+- **Min/Max**: Range of performance
+- **Sample Count**: Number of evaluated translations
 
-## Data Structure
+## 🛠️ Development
 
-### Translation Dataset
+### Setting up Development Environment
 
-The evaluation dataset (`data/translation.json`) contains structured translation examples:
+```bash
+# Clone and install in development mode
+git clone https://github.com/example/translation-evaluation-framework.git
+cd translation-evaluation-framework
+pip install -e ".[dev]"
+
+# Run tests
+pytest tests/
+
+# Format code
+black src/
+isort src/
+
+# Type checking
+mypy src/
+
+# Linting
+flake8 src/
+```
+
+### Adding New Languages
+
+1. Update `SUPPORTED_LANGUAGES` in `src/config.py`
+2. Add tokenization rules in `auto_sentence_bleu()` method
+3. Update language name mapping in translator classes
+4. Add test data for the new language in `data/translation.json`
+
+### Adding New Evaluation Metrics
+
+1. Implement metric calculation in `src/evaluator.py`
+2. Update result structures to include new metrics
+3. Add visualization support in `src/visualizer.py`
+4. Update CSV export to include new fields
+
+## 📝 Data Format
+
+The evaluation data should be in JSON format:
 
 ```json
-{
-    "id": "tech_01",
-    "domain": "tech",
-    "zh": "人工智能正在推动医疗诊断的进步。",
-    "en": "Artificial intelligence is driving progress in medical diagnostics.",
-    "ja": "人工知能は医療診断の進歩を推進しています。",
-    "fr": "L'intelligence artificielle stimule les progrès du diagnostic médical.",
-    "it": "L'intelligenza artificiale sta spingendo i progressi nella diagnostica medica.",
-    "es": "La inteligencia artificial está impulsando el progreso en el diagnóstico médico.",
-    "pt": "A inteligência artificial está impulsionando o progresso no diagnóstico médico."
-}
-```
-
-### Domains
-
-Current dataset includes examples from:
-- **Technology**: AI, software, hardware
-- **Business**: Finance, marketing, management
-- **Travel**: Tourism, transportation, hospitality
-- **Education**: Academic, learning, research
-- **Healthcare**: Medical, pharmaceutical, wellness
-- **Legal**: Law, regulations, compliance
-
-## Advanced Usage
-
-### Batch Evaluation Across All Language Pairs
-
-```python
-from evaluate import get_all_domains, evaluate_translation, plot_models_bleu_scores
-import itertools
-
-def evaluate_all_pairs(translate_function):
-    domains = get_all_domains()  # Gets all language pair combinations
-    results = {}
-    
-    for source_lang, target_lang in domains:
-        bleu_scores = evaluate_translation(source_lang, target_lang, translate_function)
-        # Flatten scores across domains
-        all_scores = list(itertools.chain(*bleu_scores.values()))
-        results[f'{source_lang}->{target_lang}'] = all_scores
-    
-    return results
-
-# Evaluate and visualize
-results = evaluate_all_pairs(my_translate_function)
-plot_models_bleu_scores(results)
-```
-
-### Model Comparison
-
-```python
-def compare_translation_models():
-    models = {
-        'Google Translate': google_translate,
-        'GPT-3.5': openai_translate,
-        'MarianMT': huggingface_translate
+[
+    {
+        "id": "tech_01",
+        "domain": "tech",
+        "zh": "人工智能正在推动医疗诊断的进步。",
+        "en": "Artificial intelligence is driving progress in medical diagnostics.",
+        "ja": "人工知能は医療診断の進歩を推進しています。",
+        "fr": "L'intelligence artificielle stimule les progrès du diagnostic médical.",
+        "it": "L'intelligenza artificiale sta spingendo i progressi nella diagnostica medica.",
+        "es": "La inteligencia artificial está impulsando el progreso en el diagnóstico médico.",
+        "pt": "A inteligência artificial está impulsionando os avanços no diagnóstico médico."
     }
-    
-    comparison_results = {}
-    for model_name, translate_func in models.items():
-        bleu_scores = evaluate_translation('zh', 'en', translate_func)
-        avg_score = get_avg_score(bleu_scores)
-        comparison_results[model_name] = avg_score
-    
-    return comparison_results
+]
 ```
 
-### Custom Evaluation Pipeline
+## 🤝 Contributing
 
-```python
-def custom_evaluation_pipeline(translate_func, source_lang='zh', target_lang='en'):
-    # Run evaluation
-    bleu_scores = evaluate_translation(source_lang, target_lang, translate_func)
-    
-    # Calculate metrics
-    avg_score = get_avg_score(bleu_scores)
-    domain_averages = {domain: sum(scores)/len(scores) 
-                      for domain, scores in bleu_scores.items()}
-    
-    # Generate plots
-    plot_bleu_score(bleu_scores, source_lang, target_lang)
-    
-    # Return comprehensive results
-    return {
-        'overall_average': avg_score,
-        'domain_averages': domain_averages,
-        'raw_scores': bleu_scores
-    }
-```
-
-## File Structure
-
-```
-evaluate/
-├── config.py              # Configuration and paths
-├── evaluate.py             # Core evaluation functions
-├── utils.py               # Utility functions for data handling
-├── translate.py           # Translation function template
-├── data/
-│   └── translation.json   # Evaluation dataset
-├── plots/                 # Generated visualization outputs
-├── requirements.txt       # Python dependencies
-└── README.md             # This file
-```
-
-## Configuration
-
-The `config.py` file defines project paths:
-
-```python
-import pathlib
-
-BASE_DIR = pathlib.Path(__file__).parent
-DATA_DIR = BASE_DIR / "data"
-PLOTS_DIR = BASE_DIR / "plots"
-```
-
-## Dependencies
-
-Key dependencies include:
-- `sacrebleu`: BLEU score calculation
-- `matplotlib`: Visualization and plotting
-- `transformers`: Hugging Face model support
-- `torch`: PyTorch for deep learning models
-- `datasets`: Dataset handling utilities
-
-See `requirements.txt` for complete dependency list.
-
-## Contributing
+We welcome contributions! Please see our [Contributing Guidelines](CONTRIBUTING.md) for details.
 
 1. Fork the repository
-2. Create a feature branch
-3. Implement your translation function following the interface guidelines
-4. Add tests and documentation
-5. Submit a pull request
+2. Create a feature branch (`git checkout -b feature/amazing-feature`)
+3. Commit your changes (`git commit -m 'Add amazing feature'`)
+4. Push to the branch (`git push origin feature/amazing-feature`)
+5. Open a Pull Request
 
+## 📄 License
 
-## Citation
+This project is licensed under the Apache License 2.0 - see the [LICENSE](LICENSE) file for details.
 
-If you use this evaluation framework in your research, please cite:
+## 🙏 Acknowledgments
 
-```bibtex
-@software{translation_evaluation_framework,
-  title={Translation Evaluation Framework},
-  author={[efwfe]},
-  year={2024},
-}
-```
+- [SacreBLEU](https://github.com/mjpost/sacrebleu) for standardized BLEU score calculation
+- [llama-cpp-python](https://github.com/abetlen/llama-cpp-python) for efficient model inference
+- The machine translation research community for evaluation standards and best practices
+
+## 📞 Support
+
+- 📧 Email: team@example.com
+- 🐛 Issues: [GitHub Issues](https://github.com/example/translation-evaluation-framework/issues)
+- 📖 Documentation: [GitHub Wiki](https://github.com/example/translation-evaluation-framework/wiki)
+
+## 🗺️ Roadmap
+
+- [ ] Support for additional evaluation metrics (METEOR, BERTScore)
+- [ ] Web interface for easy evaluation management
+- [ ] Integration with popular translation APIs
+- [ ] Parallel evaluation for improved performance
+- [ ] Custom domain support with user-provided datasets
+- [ ] Real-time evaluation monitoring and alerts

@@ -61,7 +61,7 @@ python -m src.main --source zh --target en --translator qwen --max-samples 10
 
 # Evaluate with Llama model
 python -m src.main --source zh --target en --translator llama --model-path /path/to/model.gguf
-python -m src.main --source zh --target en --translator qwen --model-path /path/to/model.gguf
+python -m src.main -a --translator qwen --model-path /path/to/model.gguf
 # Advanced usage with custom settings
 python -m src.main \
   --source zh --target en \

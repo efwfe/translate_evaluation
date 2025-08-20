@@ -187,23 +187,8 @@ class LlamaTranslator(BaseTranslator):
             raise
 
 
-class MockTranslator(BaseTranslator):
-    """Mock translator for testing purposes."""
-    
-    def translate(self, text: str) -> str:
-        """
-        Mock translation that returns text with prefix.
-        
-        Args:
-            text: Text to translate
-            
-        Returns:
-            Mock translated text
-        """
-        return f"[{self.source_lang}->{self.target_lang}] {text}"
 
-
-class LlamaQwenTranslator(BaseTranslator):
+class LlamaQwenTranslator(LlamaTranslator):
     """Translator using Llama model via llama-cpp-python of qwen."""
     
     def __init__(self, source_lang: str, target_lang: str, model_path: Optional[str] = None):
@@ -215,28 +200,7 @@ class LlamaQwenTranslator(BaseTranslator):
             target_lang: Target language code
             model_path: Path to model file (optional)
         """
-        super().__init__(source_lang, target_lang)
-        
-        try:
-            from llama_cpp import Llama
-        except ImportError:
-            raise ImportError("llama-cpp-python is required for LlamaTranslator")
-        
-        model_config = Config.get_model_config()
-        if model_path:
-            model_config['model_path'] = model_path
-        
-        if not model_config['model_path']:
-            raise ValueError("Model path is required. Set MODEL_PATH environment variable or provide model_path parameter.")
-        
-        logger.info(f"Loading Llama model from: {model_config['model_path']}")
-        
-        try:
-            self.llm = Llama(**model_config)
-            logger.info("Llama model loaded successfully")
-        except Exception as e:
-            logger.error(f"Failed to load Llama model: {e}")
-            raise
+        super().__init__(source_lang, target_lang, model_path)
         
         # Create language mapping
         self.lang_names = {

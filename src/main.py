@@ -17,7 +17,7 @@
 import argparse
 import sys
 from pathlib import Path
-from typing import List, Tuple, Optional
+from typing import List, Tuple, Optional, Dict, Any
 
 from .config import Config
 from .evaluator import TranslationEvaluator, get_all_language_pairs
@@ -252,15 +252,25 @@ def main() -> int:
                     visualizer.plot_domain_scores(domain_scores, source_lang, target_lang)
             
         else:
-            # Multiple language pairs evaluation
+            # Multiple language pairs evaluation with translator caching
+            translator_cache = {}
+            
             def multi_translate_func(text: str, source_lang: str, target_lang: str) -> str:
-                translator = create_translator(
-                    translator_type=args.translator,
-                    source_lang=source_lang,
-                    target_lang=target_lang,
-                    model_path=args.model_path
-                )
-                return translator.translate(text)
+                # Create cache key for language pair
+                pair_key = f"{source_lang}->{target_lang}"
+                
+                # Create translator only if not cached
+                if pair_key not in translator_cache:
+                    logger.info(f"Creating translator for {pair_key}")
+                    translator_cache[pair_key] = create_translator(
+                        translator_type=args.translator,
+                        source_lang=source_lang,
+                        target_lang=target_lang,
+                        model_path=args.model_path
+                    )
+                
+                # Use cached translator
+                return translator_cache[pair_key].translate(text)
             
             # Evaluate all pairs
             results = evaluator.evaluate_multiple_language_pairs(

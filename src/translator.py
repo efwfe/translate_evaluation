@@ -132,13 +132,13 @@ class LlamaTranslator(BaseTranslator):
         
         # Create language mapping
         self.lang_names = {
-            'zh': 'Chinese',
-            'en': 'English', 
-            'ja': 'Japanese',
-            'fr': 'French',
-            'it': 'Italian',
-            'es': 'Spanish',
-            'pt': 'Portuguese'
+            'zh': '中文',
+            'en': '英文', 
+            'ja': '日文',
+            'fr': '法语',
+            'it': '意大利语',
+            'es': '西班牙语',
+            'pt': '葡萄牙语'
         }
     
     def translate(self, text: str) -> str:
@@ -154,14 +154,31 @@ class LlamaTranslator(BaseTranslator):
         if not text.strip():
             return ""
         
-        source_lang_name = self.lang_names.get(self.source_lang, self.source_lang)
-        target_lang_name = self.lang_names.get(self.target_lang, self.target_lang)
+        source_language = self.lang_names.get(self.source_lang.lower(), self.source_lang.lower())
+        target_language = self.lang_names.get(self.target_lang.lower(), self.target_lang.lower())
         
         system_prompt = (
-            f"You are a professional translator. Translate the following text from "
-            f"{source_lang_name} to {target_lang_name}. "
-            f"Provide only the translation without any additional explanations or comments."
-        )
+                    """
+        **角色**：你是一名专业的{target_language}翻译专家。
+
+        **任务**：请将以下{source_language}文本翻译成{target_language}。
+
+        **翻译要求与规范**：
+        1.  **保留规则**：原文中出现的以下内容必须**完全保留其原始形式**，不得进行任何翻译、改写或转换：
+            *   技术术语、行业特定词汇与专业名词
+            *   产品名称、公司名称、品牌名称、商标
+            *   代码片段、函数名、变量名、文件名、路径
+            *   专有名词（如人名、地名）、缩写、首字母缩略词（例如：API, NLP, RAG, JSON, Python, ChatGPT）
+        2.  **语言质量**：译文必须符合{target_language}的母语表达习惯，确保行文流畅、自然地道，彻底避免生硬晦涩的直译。
+        3.  **专业准确**：在翻译过程中必须保持原文的专业性和信息的准确性，清晰无误地传达原文的真实含义。
+        4.  **优化处理**：如遇原文存在表达模糊、歧义或逻辑不清的情况，允许在忠实于原意的基础上，依照{target_language}的语言习惯对语序、措辞或句式进行必要的调整，以显著提升译文的可读性和逻辑性。
+
+        **重要注意事项**：
+        *   **输出纯净**：最终的翻译结果必须是**纯净的{target_language}文本**（除根据规则必须保留的{source_language}内容外），不得包含任何额外的解释、注释、说明或标记（如省略号、项目符号）。
+        *   **仅输出译文**：请直接提供完成后的译文，无需重复任务说明或待翻译文本。
+
+        **待翻译的{target_language}文本**：""".format(source_language=source_language, target_language=target_language)
+                )
         
         user_prompt = f"Translate this text: {text}"
         

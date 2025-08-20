@@ -57,11 +57,11 @@ The framework provides a comprehensive command-line interface for easy evaluatio
 
 ```bash
 # Evaluate single language pair with mock translator (for testing)
-python -m src.main --source zh --target en --translator mock --max-samples 10
+python -m src.main --source zh --target en --translator qwen --max-samples 10
 
 # Evaluate with Llama model
 python -m src.main --source zh --target en --translator llama --model-path /path/to/model.gguf
-
+python -m src.main --source zh --target en --translator qwen --model-path /path/to/model.gguf
 # Advanced usage with custom settings
 python -m src.main \
   --source zh --target en \

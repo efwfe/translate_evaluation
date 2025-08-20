@@ -22,7 +22,7 @@ from typing import List, Tuple, Optional
 from .config import Config
 from .evaluator import TranslationEvaluator, get_all_language_pairs
 from .logger import get_logger
-from .translator import create_translator
+from .translator import create_translator,translator_classes
 from .visualizer import EvaluationVisualizer
 
 logger = get_logger(__name__)
@@ -70,8 +70,8 @@ Examples:
     # Translator configuration
     parser.add_argument(
         '--translator',
-        choices=['llama', 'mock'],
-        default='mock',
+        choices=list(translator_classes.keys()),
+        default='llama',
         help='Translator type to use'
     )
     

@@ -178,7 +178,7 @@ def create_evaluation_summary(
     # Create summary data
     summary = {
         'timestamp': timestamp,
-        'total_evaluations': len(evaluation_results.get('individual_scores', [])),
+        'total_evaluations': len(evaluation_results.get('individual_results', [])),
         'language_pairs': list(evaluation_results.get('language_pairs', [])),
         'domains': list(evaluation_results.get('domains', [])),
         'average_scores': evaluation_results.get('average_scores', {}),
@@ -190,11 +190,15 @@ def create_evaluation_summary(
     save_data(summary, json_path)
     
     # Save detailed results as CSV
-    if 'individual_scores' in evaluation_results:
+    csv_path = None
+    if 'individual_results' in evaluation_results and evaluation_results['individual_results']:
         csv_path = output_path.with_suffix('.csv')
-        save_to_csv(evaluation_results['individual_scores'], csv_path)
-    
-    logger.info(f"Evaluation summary saved to {json_path} and {csv_path}")
+        save_to_csv(evaluation_results['individual_results'], csv_path)
+
+    if csv_path:
+        logger.info(f"Evaluation summary saved to {json_path} and {csv_path}")
+    else:
+        logger.info(f"Evaluation summary saved to {json_path}")
 
 
 def calculate_statistics(scores: List[float]) -> Dict[str, float]:

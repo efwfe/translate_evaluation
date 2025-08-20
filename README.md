@@ -68,6 +68,48 @@ visualizer.create_evaluation_report(results)
 evaluator.save_results(results, "my_evaluation")
 ```
 
+#### Command Line Interface
+
+The framework provides a comprehensive command-line interface for easy evaluation:
+
+```bash
+# Evaluate single language pair with mock translator (for testing)
+python -m src.main --source zh --target en --translator mock --max-samples 10
+
+# Evaluate with Llama model
+python -m src.main --source zh --target en --translator llama --model-path /path/to/model.gguf
+
+# Evaluate all language pairs with limited samples
+python -m src.main --all-pairs --translator mock --max-samples 5
+
+# Evaluate specific language pairs
+python -m src.main --pairs "zh,en en,fr fr,es" --translator mock
+
+# Advanced usage with custom settings
+python -m src.main \
+  --source zh --target en \
+  --translator llama \
+  --model-path /path/to/model.gguf \
+  --max-samples 100 \
+  --output-prefix "my_evaluation" \
+  --show-plots \
+  --log-level DEBUG
+
+```
+
+**Common CLI Options:**
+- `--source`, `-s`: Source language code (zh, en, ja, fr, it, es, pt)
+- `--target`, `-t`: Target language code (required with --source)
+- `--all-pairs`, `-a`: Evaluate all possible language pairs
+- `--pairs`, `-p`: Specify custom language pairs (e.g., "zh,en en,fr")
+- `--translator`: Choose translator type (`mock`, `llama`)
+- `--model-path`: Path to model file (required for Llama translator)
+- `--max-samples`: Limit number of evaluation samples
+- `--output-prefix`: Custom prefix for output files
+- `--show-plots`: Display plots interactively
+- `--log-level`: Set logging level (DEBUG, INFO, WARNING, ERROR)
+- `--verbose`, `-v`: Enable verbose output
+
 ## 📊 Output and Results
 
 The framework generates multiple types of output:

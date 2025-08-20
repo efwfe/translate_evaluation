@@ -293,9 +293,6 @@ See `requirements.txt` for complete dependency list.
 4. Add tests and documentation
 5. Submit a pull request
 
-## License
-
-[Add your license information here]
 
 ## Citation
 
@@ -304,8 +301,7 @@ If you use this evaluation framework in your research, please cite:
 ```bibtex
 @software{translation_evaluation_framework,
   title={Translation Evaluation Framework},
-  author={[Your Name]},
+  author={[efwfe]},
   year={2024},
-  url={[Your Repository URL]}
 }
 ```
